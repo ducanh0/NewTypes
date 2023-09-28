@@ -1,6 +1,6 @@
 #include "mainCharacter.h"
 
-mainCha::mainCha(SDL_Renderer * &newRender, mPoint &other){
+mainCha::mainCha(SDL_Renderer * newRender, mPoint other){
     a = new Dot(main_pic, other, newRender, BLACK.r, BLACK.g, BLACK.b);
     other.x = a->td.x + main_w / 2 , other.y = a->td.y + main_h / 2 ;
     for(int i = 0;i < sl_bullet;i ++)
@@ -14,18 +14,18 @@ mainCha::~mainCha(){
     chuaBan.clear() ;
 }
 
-void mainCha::dichuyen(const int &x,const int &y){
-    a->td.x += x * 3, a->td.y += y * 3;
+void mainCha::dichuyen( int x, int y){
+    a->td.x += x , a->td.y += y ;
 
     a->td.x = max(0, min(a->td.x , SCREEN_WIDTH - main_w));
     a->td.y = max(0, min(a->td.y , SCREEN_HEIGHT - main_h));
 }
 
-void mainCha::render(const double &angle){
+void mainCha::render( double angle){
     a->render(angle);
 }
 
-void mainCha::bandan(const double &ha,const double &hb,const bool &okx,const bool &oky){ /// ok la tien hay lui
+void mainCha::bandan( double ha, double hb, bool okx, bool oky){ /// ok la tien hay lui
     int id =  chuaBan.back() ;
 
     b[id]->a->td.x = a->td.x + main_w / 2 , b[id]->a->td.y = a->td.y + main_h / 2 ;

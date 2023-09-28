@@ -11,15 +11,15 @@ public :
     bullet * b[sl_bullet];
     vector<int>  chuaBan;
 
-    mainCha(SDL_Renderer * &newRender,mPoint &other);
+    mainCha(SDL_Renderer * newRender,mPoint other);
 
     ~mainCha();
 
-    void render(const double &angle);
+    void render( double angle);
 
-    void dichuyen(const int &x,const int &y);
+    void dichuyen( int x, int y);
 
-    void bandan(const double &ha,const double &hb,const bool &okx ,const bool &oky); /// goc tu mainCha den enemy
+    void bandan( double ha, double hb, bool okx , bool oky); /// goc tu mainCha den enemy
 
     static void playSound();
 };

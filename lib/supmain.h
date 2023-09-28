@@ -7,12 +7,14 @@ void khoitaoSDL(SDL_Window * &newWindow , SDL_Renderer * &newRender);
 
 void thoatSDL(SDL_Window * &newWindow , SDL_Renderer * &newRender ) ;
 
-void renderGamePlay( SDL_Renderer * &newRender, Game * &g) ;
+void renderGamePlay( SDL_Renderer * newRender, Game * g) ;
 
-pair<bool, bool> renderPreGame( SDL_Renderer * &newRender,  SDL_Event &e,  Game * &g);
+string selectInput();
 
-void renderEndGame( int &finalScore, int &totalType,  int &slDie,  SDL_Renderer * &newRender , SDL_Event &e) ;
+pair<bool, bool> renderPreGame( SDL_Renderer * newRender,  SDL_Event e,  Game * g);
 
-void solEvent( SDL_Event &e,bool & runGame, Game * &g);
+void renderEndGame( int finalScore, int totalType,  int slDie,  SDL_Renderer * newRender , SDL_Event e,bool & replay) ;
+
+void solEvent( SDL_Event e,bool & runGame, Game * g);
 
 #endif

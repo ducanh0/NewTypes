@@ -18,15 +18,15 @@ public :
 
     ~LTexture();
 
-    void loadImage(const string &path,const int &r,const int &g,const int &b);
+    void loadImage( string path, int r, int g, int b);
 
-    void loadText(const string &text,const SDL_Color &textColor);
+    void loadText( string text, SDL_Color textColor);
 
-    void setAlpha(const Uint8 &alpha );
+    void setAlpha( Uint8 alpha );
 
-    void setColor(const Uint8 &red,const Uint8 &green,const Uint8 &blue );
+    void setColor( Uint8 red, Uint8 green, Uint8 blue );
 
-    void render(const int &x, const int &y , SDL_Rect * clip = NULL, double angle = 0.0 ,
+    void render( int x,  int y , SDL_Rect * clip = NULL, double angle = 0.0 ,
                  SDL_Point * center = NULL,  SDL_RendererFlip flip = SDL_FLIP_NONE);
 };
 
@@ -37,7 +37,7 @@ public :
 
     ~LSound();
 
-    LSound(const string &path);
+    LSound( string path);
 
     void playSound();
 };
@@ -49,7 +49,7 @@ public :
 
     ~LMusic();
 
-    LMusic(const string &path);
+    LMusic( string path);
 
     void playMusic();
 
@@ -68,9 +68,9 @@ public :
 
     bool isDead();
 
-    void reset(mPoint &other);
+    void reset(mPoint other);
 
-    void render( SDL_Renderer * newRender, mPoint &other,const bool &ok);
+    void render( SDL_Renderer * newRender, mPoint other, bool ok);
 };
 
 class Dot{
@@ -80,15 +80,15 @@ public :
     double  vx, vy ;
     LTexture * pic;
 
-    Dot(const string &path,mPoint &other, SDL_Renderer * &newRender,const int &r,const int &g,const int &b);
+    Dot( string path,mPoint other, SDL_Renderer * newRender, int r, int g, int b);
 
     ~Dot();
 
-    bool dichuyen(const int &w  ,const int &h );
+    bool dichuyen( int w  , int h );
 
-    bool vacham(Dot * &other);
+    bool vacham(Dot * other);
 
-    void render(const double &angle);
+    void render( double angle);
 };
 
 class LButton{
@@ -99,13 +99,13 @@ public :
     LTexture * b;
     int w, h, n ;
 
-    LButton(SDL_Renderer * &newRender, TTF_Font * f[] , mPoint &other,const vector<string> & V);
+    LButton(SDL_Renderer * newRender, TTF_Font * f[] , mPoint other, vector<string>  V);
 
     ~LButton();
 
-    void handleEvent(SDL_Event &e,bool & ok,bool & ok2);
+    void handleEvent(SDL_Event e,bool & ok,bool  &ok2,bool & replay);
 
-    void render(const bool &ok1, bool &ok, bool &ok2);
+    void render( bool ok1, bool ok, bool ok2,bool ok3 = 0);
 };
 
 #endif

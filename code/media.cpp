@@ -14,15 +14,15 @@ LTexture::~LTexture(){
     SDL_DestroyTexture(mTexture);
 }
 
-void LTexture::setColor(const Uint8 &red,const Uint8 &green,const Uint8 &blue ){
+void LTexture::setColor( Uint8 red, Uint8 green, Uint8 blue ){
 	SDL_SetTextureColorMod( mTexture, red, green, blue );
 }
 
-void LTexture::setAlpha(const Uint8 &alpha ){
+void LTexture::setAlpha( Uint8 alpha ){
 	SDL_SetTextureAlphaMod( mTexture, alpha );
 }
 
-void LTexture::loadImage(const string &path,const int &r,const int &g,const int &b){
+void LTexture::loadImage( string path, int r, int g, int b){
     SDL_Surface * loadSurface = IMG_Load(path.c_str());
 
     if(loadSurface == NULL){
@@ -44,7 +44,7 @@ void LTexture::loadImage(const string &path,const int &r,const int &g,const int 
     }
 }
 
-void LTexture::loadText(const string &text,const SDL_Color &textColor){
+void LTexture::loadText( string text, SDL_Color textColor){
     SDL_Surface * loadSurface = TTF_RenderText_Solid(mFont , text.c_str(), textColor);
 
     if(loadSurface == NULL){
@@ -61,7 +61,7 @@ void LTexture::loadText(const string &text,const SDL_Color &textColor){
     }
 }
 
-void LTexture::render(const int &x,const int &y,  SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip ){
+void LTexture::render( int x, int y,  SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip ){
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
 	if( clip != NULL )
@@ -77,7 +77,7 @@ LSound::~LSound(){
     Mix_FreeChunk(mSou);
 }
 
-LSound::LSound(const string &path){
+LSound::LSound( string path){
     mSou = Mix_LoadWAV(path.c_str());
     if(mSou == NULL)
         cout << "loi o media.cpp, ham lSound::lSound, dong 86\n" ;
@@ -92,7 +92,7 @@ LMusic::~LMusic(){
     Mix_FreeMusic(mMus);
 }
 
-LMusic::LMusic(const string &path){
+LMusic::LMusic( string path){
     mMus = Mix_LoadMUS(path.c_str());
     if(mMus == NULL)
         cout << "loi o media.cpp , ham lmusic::lMusic , dong 108\n" ;
@@ -113,7 +113,7 @@ bool bling::isDead(){
     return bool(mFrame > 10) ;
 }
 
-void bling::reset(mPoint &other){
+void bling::reset(mPoint other){
     td.x = other.x - 5 + (rand() % 25) ;
     td.y = other.y - 5 + (rand() % 25) ; /// lam nnay de vi tri phan bo bat ky [ x - 5 , x + 20 ]
 
@@ -130,7 +130,7 @@ bling::bling(){
     mFrame = 11 ;
 }
 
-void bling::render( SDL_Renderer * newRender, mPoint &other,const bool &ok){
+void bling::render( SDL_Renderer * newRender, mPoint other, bool ok){
     static LTexture * c[4] ;
     if(ok){
         for(int i = 0;i < 4;i ++)
@@ -156,7 +156,7 @@ Dot::~Dot(){
     pic->~LTexture();
 }
 
-Dot::Dot(const string &path,mPoint &other,SDL_Renderer * &newRender,const int &r,const int &g ,const int &b){
+Dot::Dot( string path,mPoint other,SDL_Renderer * newRender, int r, int g , int b){
     td.x = other.x;
     td.y = other.y;
     vx = vy = 0.0 ;
@@ -164,13 +164,13 @@ Dot::Dot(const string &path,mPoint &other,SDL_Renderer * &newRender,const int &r
     pic->loadImage(path, r, g, b) ;
 }
 
-bool Dot::dichuyen(const int &w  ,const int &h ){ /// di chuyen xong thi xem con trong bang khong
+bool Dot::dichuyen( int w  , int h ){ /// di chuyen xong thi xem con trong bang khong
     td.x += int(vx) ;
     td.y += int(vy);
     return td.isInside(w, h);
 }
 
-bool Dot::vacham(Dot * &other){
+bool Dot::vacham(Dot * other){
     int l1 = td.x , r1 = l1 + pic->mWidth , l2 = other->td.x , r2 = l2 + other->pic->mWidth;
     if((r1 < l2) || (r2 < l1)) return 0;
 
@@ -180,25 +180,27 @@ bool Dot::vacham(Dot * &other){
     return 1;
 }
 
-void Dot::render(const double &angle){
+void Dot::render( double angle){
     pic->render(td.x, td.y, NULL, angle, NULL, SDL_FLIP_NONE);
 }
 
-LButton::LButton(SDL_Renderer * &newRender, TTF_Font * f[] , mPoint &other,const vector<string> & V){
+LButton::LButton(SDL_Renderer * newRender, TTF_Font * f[] , mPoint other, vector<string> V){
     a = mOut;
     td.x = other.x , td.y = other.y;
     n = int(V.size());
 
-    b = new LTexture [n] ;
+    if(n > 0){
+            b = new LTexture [n] ;
 
-    for(int i = 0 ;i < n;i ++){
-        if(i < 2){
-            b[i].mFont = f[0] , b[i].mRender = newRender;
-            b[i].loadText(V[i] , i < 1 ? PINK : YELLOW);
-        }
-        else{
-            b[i].mFont = f[1], b[i].mRender = newRender;
-            b[i].loadText(V[i] , (V[i] == "ON" || V[i] == "OFF") ? ORANGE : CYAN);
+        for(int i = 0 ;i < n;i ++){
+            if(i < 2){
+                b[i].mFont = f[0] , b[i].mRender = newRender;
+                b[i].loadText(V[i] , i < 1 ? PINK : YELLOW);
+            }
+            else{
+                b[i].mFont = f[1], b[i].mRender = newRender;
+                b[i].loadText(V[i] , (V[i] == "ON" || V[i] == "OFF") ? ORANGE : CYAN);
+            }
         }
     }
 }
@@ -207,7 +209,7 @@ LButton::~LButton(){
     delete [] b;
 }
 
-void LButton::handleEvent(SDL_Event &e,bool & ok,bool & ok2){
+void LButton::handleEvent(SDL_Event e,bool & ok,bool & ok2,bool & replay){
     if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP){
         int x, y ;
         SDL_GetMouseState(&x, &y);
@@ -223,7 +225,7 @@ void LButton::handleEvent(SDL_Event &e,bool & ok,bool & ok2){
             else {
                 a = mIn ;
                 if(e.type == SDL_MOUSEBUTTONDOWN)
-                    a = mDown ;
+                    a = mDown , replay = 1;
             }
         }
     } else if(e.type == SDL_KEYDOWN) {
@@ -250,22 +252,26 @@ void LButton::handleEvent(SDL_Event &e,bool & ok,bool & ok2){
     }
 }
 
-void LButton::render(const bool &ok1 , bool &ok , bool &ok2){
-    if(a != mDown){
-        (a == mIn) ? b[1].render(td.x , td.y) : b[0].render(td.x , td.y);
+void LButton::render( bool ok1 , bool ok , bool ok2,bool ok3){
+    if(ok3){
+        b[0].render(td.x, td.y);
     } else {
-        int h2 = 0 ;
-        for(int i = 2 ; i < n - (ok1 ? 2 : 0);i ++){
-            b[i].render(td.x , td.y + h2);
+        if(a != mDown){
+            (a == mIn) ? b[1].render(td.x , td.y) : b[0].render(td.x , td.y);
+        } else {
+            int h2 = 0 ;
+            for(int i = 2 ; i < n - (ok1 ? 2 : 0);i ++){
+                b[i].render(td.x , td.y + h2);
 
-            if(ok1){
-                if(i == 2)
-                    b[ok ? n - 2 : n - 1].render(td.x + b[i].mWidth , td.y + h2) ;
-                else
-                    b[ok2 ? n - 2 : n - 1].render(td.x + b[i].mWidth , td.y + h2) ;
+                if(ok1){
+                    if(i == 2)
+                        b[ok ? n - 2 : n - 1].render(td.x + b[i].mWidth , td.y + h2) ;
+                    else
+                        b[ok2 ? n - 2 : n - 1].render(td.x + b[i].mWidth , td.y + h2) ;
+                }
+
+                h2 += b[i].mHeight ;
             }
-
-            h2 += b[i].mHeight ;
         }
     }
 }

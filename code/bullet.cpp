@@ -1,6 +1,6 @@
 #include "bullet.h"
 
-bullet::bullet(SDL_Renderer * &newRender, mPoint &other){
+bullet::bullet(SDL_Renderer * newRender, mPoint other){
     a = new Dot(bullet_pic, other, newRender, BLACK.r, BLACK.g, BLACK.b);
 }
 
@@ -8,7 +8,7 @@ bullet::~bullet(){
     a->~Dot();
 }
 
-void bullet::dichuyen(Dot * &other){
+void bullet::dichuyen(Dot * other){
     a->td.x += ((okx) ? vantoc_bullet : - vantoc_bullet) ;
     a->td.y = a->vx * a->td.x + a->vy;
 

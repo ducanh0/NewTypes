@@ -1,6 +1,6 @@
 #include "enemy.h"
 
-enemy::enemy(const string &text,SDL_Renderer * &newRender , TTF_Font * &newFont,mPoint &other, int &h2){
+enemy::enemy( string text,SDL_Renderer * newRender , TTF_Font * newFont,mPoint other, int h2){
     a = new Dot(string(enemy_pic + char('0' + h2) + ".png"), other, newRender, BLACK.r, BLACK.g, BLACK.b);
 
     for(int i = 0;i < sl_bling;i ++)
@@ -59,7 +59,7 @@ void enemy::dichuyen(){
         else if(h == 4) h = 0;
         else h = 7;
     }
-    a->td.x += huong[h][0] * 2 , a->td.y += huong[h][1] * 2;
+    a->td.x += huong[h][0]  , a->td.y += huong[h][1] ;
 
     a->td.x = max(0 , min(a->td.x , SCREEN_WIDTH - enemy_w));
     a->td.y = max(0, min(a->td.y, SCREEN_HEIGHT - enemy_h));

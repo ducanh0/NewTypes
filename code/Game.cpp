@@ -1,18 +1,33 @@
 #include "Game.h"
 
-Game::Game(SDL_Renderer * &newRender){
+Game::Game(SDL_Renderer * newRender,string in){
     mPoint init(SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2);
     a = new mainCha(newRender, init) ;
+   /// cerr << 11;
+	///s1 = "data/text/" + s1 + ".txt";
+	if(in == "123456"){
+        in = du_lieu ;
 
-    ifstream ten(du_lieu);
-    if(! ten.is_open() );
+	}
+        in = "data/text/" + in + ".txt";
+	this->in = in;
+
+    ifstream ten(in);
+    if(! ten.is_open() ){
+
+        cout << "file " ;
+        for(int i = 10;i < int(in.size());i ++)
+            cout << in[i];
+        cout << " khong ton tai trong thu muc data/text\n";
+        cout << "hay bo sung file do trong thu muc data/text hoac tat game, chay lai va nhap lai dung dinh dang yymmdd\n" ;
+    }
     else {
         while(! ten.eof()){
             string s; ten >> s;
             if(! ten) break;
             bool ok = 1 ;
 
-            if(int(s.size()) < 7)
+            if(int(s.size()) < 1)
                 ok = 0 ;
 
             for(char i : s)
@@ -21,6 +36,8 @@ Game::Game(SDL_Renderer * &newRender){
                 v.push_back(s);
         }
     }
+  ///  cerr << int(v.size());
+
 
     for(int i = 0 ; i < sl_enemy;i ++) initTd.push_back(mPoint(i * 300  , 1));
 
@@ -30,12 +47,14 @@ Game::Game(SDL_Renderer * &newRender){
     if(gFont == NULL)
         cout << "loi o game.cpp , ham game(...), dong 50\n" ;
 
+
     for(int i = 0;i < sl_enemy;i ++){
+       ///     cerr<<int(v.size());
         b[i] = new enemy(v.back() , newRender, gFont, initTd[i], i );
         v.pop_back();
         tgian[i] = 0;
     }
-
+///cerr << 11;
     for(int i = 0;i < sl_gai;i ++){
         c[i] = new Dot(gai_pic , initTd[0], newRender, BLACK.r , BLACK.g, BLACK.b);
         chuaBanGai.push_back(i);
@@ -69,7 +88,9 @@ Game::~Game(){
     true_type = total_type = sl_die = idPri = 0 ;
 }
 
-void Game::reset_enemy(const int &id){
+void Game::reset_enemy( int id){
+    if(v.empty())
+        return;
     b[id]->g = 0 ;
     b[id]->e = v.back() ; v.pop_back() ;
     b[id]->f = int(b[id]->e.size());
@@ -77,7 +98,7 @@ void Game::reset_enemy(const int &id){
     b[id]->a->td = initTd[sl_die % sl_enemy];
 }
 
-void Game::solKey(const char &c){
+void Game::solKey( char c){
     total_type ++ ;
 
     mPoint * x1 = new mPoint(a->a->td.x + main_w / 2 , a->a->td.y + main_h / 2) ;
@@ -127,7 +148,7 @@ void Game::solKey(const char &c){
 void Game::render(){
     pBg->render(0, 0);
 
-   for(int i = 0;i < sl_enemy;i ++) {
+   for(int i = 0;i < sl_enemy;i ++) if(! b[i]->isDead()) {
         bool ok = 0 ;
         while((! V[i].empty()) && ( a->b[V[i].front()]->a->vacham(b[i]->a) )){
             int id = V[i].front();
@@ -203,7 +224,9 @@ void Game::render(){
 }
 
 bool Game::isGameOver(){
-    for(int i = 0;i < sl_enemy;i ++)
+    int sl = 0;
+    for(int i = 0;i < sl_enemy;i ++) if(! b[i]->isDead()){
+        sl ++;
         if(a->a->vacham(b[i]->a)){
 
             a->playSound();
@@ -211,6 +234,13 @@ bool Game::isGameOver(){
             return 1;
 
         }
+    }
+
+    if(! sl){
+        a->playSound();
+        SDL_Delay(100);
+        return 1;
+    }
 
     for(int i = 0;i < int(daBanGai.size());i ++){
         int id = daBanGai[i];
@@ -231,7 +261,7 @@ bool Game::isGameOver(){
     return 0;
 }
 
-void Game::banGai(const int &id){
+void Game::banGai( int id){
     mPoint toado(b[id]->a->td.x + enemy_w / 2 , b[id]->a->td.y + enemy_h / 2);
     for(int i = 0;i < 8;i ++){
         int id = chuaBanGai.back();
@@ -253,15 +283,15 @@ void Game::auto_adjust_mainCha(){
         x2.x = b[i]->a->td.x + enemy_w / 2 , x2.y = b[i]->a->td.y + enemy_h / 2;
 
         double dis =  x1.kc(x2);
-        if(dis <= 50.0)
-            sVx += double(x1.x - x2.x) * 50.0 / dis  , sVy += double(x1.y - x2.y) * 50.0 / dis , ok = 1;
+        if(dis <= 45.0)
+            sVx += double(x1.x - x2.x) * 45.0 / dis  , sVy += double(x1.y - x2.y) * 45.0 / dis , ok = 1;
     }
     for(int id : daBanGai){
         x2.x = c[id]->td.x + gai_w / 2 , x2.y = c[id]->td.y + gai_h / 2;
 
         double dis =  x1.kc(x2);
-        if(dis <= 50.0)
-            sVx += double(x1.x - x2.x) * 50.0 / dis  , sVy += double(x1.y - x2.y) * 50.0 / dis , ok = 1;
+        if(dis <= 45.0)
+            sVx += double(x1.x - x2.x) * 45.0 / dis  , sVy += double(x1.y - x2.y) * 45.0 / dis , ok = 1;
     }
 
     if(ok){
@@ -282,3 +312,78 @@ void Game::auto_adjust_mainCha(){
     a->dichuyen(int( sVx ), int( sVy ));
 }
 
+void Game::refresh(){
+    mPoint init(SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2);
+  ///  a = new mainCha(newRender, init) ;
+   /// cerr << 11;
+	///s1 = "data/text/" + s1 + ".txt";
+
+	a->a->td = init;
+	a->a->vx = a->a->vy = 0;
+
+	if(int(v.size()) < 10) {
+        v.clear() ;
+        ifstream ten(in);
+        if(! ten.is_open() );
+        else {
+            while(! ten.eof()){
+                string s; ten >> s;
+                if(! ten) break;
+                bool ok = 1 ;
+
+                if(int(s.size()) < 1)
+                    ok = 0 ;
+
+                for(char i : s)
+                    ok &= ((i >= 'a') && (i <= 'z'));
+                if(ok)
+                    v.push_back(s);
+            }
+        }
+        random_shuffle(v.begin() , v.end());
+	}
+
+   /// cerr << int(v.size());
+
+
+   /// for(int i = 0 ; i < sl_enemy;i ++) initTd.push_back(mPoint(i * 300  , 1));
+
+
+   /// gFont = TTF_OpenFont(enemy_font.c_str(), 25);
+    ///if(gFont == NULL)
+    ///    cout << "loi o game.cpp , ham game(...), dong 50\n" ;
+
+
+    for(int i = 0;i < sl_enemy;i ++){
+       ///     cerr<<int(v.size());
+      ///  b[i] = new enemy(v.back() , newRender, gFont, initTd[i], i );
+        b[i]->a->td = initTd[i] ;
+        b[i]->e = v.back();   v.pop_back();
+        b[i]->f = int(b[i]->e.size());
+        b[i]->g = 0;
+        b[i]->h = i % 3 + 3 ;
+        for(int j = 0 ; j < sl_bling;j ++){
+            b[i]->b[j]->mFrame = 11;
+            b[i]->b[j]->render(NULL, initTd[i], 0);
+        }
+
+        tgian[i] = 0;
+    }
+///cerr << 11;
+    chuaBanGai.clear() ; daBanGai.clear() ;
+    for(int i = 0;i < sl_enemy;i ++) V[i].clear() ;
+
+    for(int i = 0;i < sl_gai;i ++){
+        c[i]->td.x = c[i]->td.y = 0 , c[i]->vx = c[i]->vy = 0 ;
+      ///  c[i] = new Dot(gai_pic , initTd[0], newRender, BLACK.r , BLACK.g, BLACK.b);
+        chuaBanGai.push_back(i);
+    }
+
+   /// pBg = new LTexture(newRender, NULL);
+  ///  pBg->loadImage(back_in_pic, WHITE.r, WHITE.g, WHITE.b);
+
+  ///  mBg = new LMusic(back_in_sou);
+
+    true_type = total_type = sl_die = 0;
+    idPri = -1 ;
+}

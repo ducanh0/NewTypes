@@ -1,5 +1,32 @@
 #include "supmain.h"
 
+string selectInput(){
+    cout << "Nhap ngay ban muon on tap, dinh dang yymmdd ( vi du : 230308 la ngay 08 / 03 / 2023 )\n" ;
+    cout << "Hay nhap dung dinh dang neu ban muon on tap tu vung theo ngay bat ky\n";
+    cout << "Luu y la replay bao nhieu lan thi file tu vung se khong thay doi\n";
+    cout << "Nen neu muon thay doi de on tap theo ngay khac, hay tat game va chay lai game\n";
+    cout << "Neu khong muon on tap theo ngay thi nhap 123456\n";
+
+    string ans ;
+
+    while(true){
+        cin >> ans ;
+
+        if(ans.size() != 6){
+            cout << "sai dinh dang, hay nhap lai chuan dinh dang yymmdd ( vi du : 230308 )\n" ;
+        } else {
+            bool ok = 1;
+            for(int i = 0;i < 6;i ++)
+                ok &= ((ans[i] >= '0') && (ans[i] <= '9'));
+
+            if(!ok)
+                cout << "sai dinh dang, hay nhap lai chuan dinh dang yymmdd ( vi du : 230308 )\n" ;
+            else
+                return ans;
+        }
+    }
+}
+
 void khoitaoSDL(SDL_Window * &newWindow , SDL_Renderer * &newRender){
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
         cout << "loi o supmain.cpp , ham khoitaoSDL , dong 5\n" ;
@@ -38,13 +65,13 @@ void thoatSDL(SDL_Window * &newWindow , SDL_Renderer * &newRender) {
     SDL_Quit();
 }
 
-void renderGamePlay(SDL_Renderer * &newRender, Game * &g) {
+void renderGamePlay(SDL_Renderer * newRender, Game * g) {
     g->render();
 
     SDL_RenderPresent(newRender);
 }
 
-void solEvent(SDL_Event &e,bool & runGame,Game * &g){
+void solEvent(SDL_Event e,bool & runGame,Game * g){
     while( SDL_PollEvent( &e ) != 0 ){
         if(e.type == SDL_QUIT)
             runGame = 0;
@@ -186,7 +213,7 @@ void solEvent(SDL_Event &e,bool & runGame,Game * &g){
     }
 }
 
-pair<bool, bool> renderPreGame(SDL_Renderer * &newRender, SDL_Event &e, Game * &g){ /// co choi khong , co bat autopilot khong
+pair<bool, bool> renderPreGame(SDL_Renderer * newRender, SDL_Event e, Game * g){ /// co choi khong , co bat autopilot khong
     TTF_Font * f[2] , * ctitle;
 
     f[0] = TTF_OpenFont(preGame_font.c_str() , 30);
@@ -229,8 +256,9 @@ pair<bool, bool> renderPreGame(SDL_Renderer * &newRender, SDL_Event &e, Game * &
                 return {0, 0};
             if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_RETURN))
                 return {0, 0};
+            bool voDung = 0;
             for(int i = 0;i < 3;i ++)
-                a[i]->handleEvent(e, ok, ok2) ;
+                a[i]->handleEvent(e, ok, ok2, voDung) ;
         }
 
         pbg->render(0, 0);
@@ -257,7 +285,7 @@ pair<bool, bool> renderPreGame(SDL_Renderer * &newRender, SDL_Event &e, Game * &
     return {1 , ok2};
 }
 
-void renderEndGame(int &finalScore, int &totalType, int &slDie, SDL_Renderer * &newRender,SDL_Event &e){
+void renderEndGame(int finalScore, int totalType, int slDie, SDL_Renderer * newRender,SDL_Event e, bool & replay){
     LSound * amthanh = new LSound(back_end_sou);
     amthanh->playSound();
 
@@ -298,15 +326,24 @@ void renderEndGame(int &finalScore, int &totalType, int &slDie, SDL_Renderer * &
 
     LTexture * c1 = new LTexture(newRender, f1) , * c2 = new LTexture(newRender, f1) , * c3 = new LTexture(newRender, f1) ,
     * s1 = new LTexture(newRender, f2) , * s2 = new LTexture(newRender, f2) , * s3 = new LTexture(newRender, f2) ,
-    * pbg = new LTexture(newRender, NULL);
+    * pbg = new LTexture(newRender, NULL); ///, * rpl = new LTexture(newRender, NULL);
+
+    mPoint repTd ; repTd.x = 1050 , repTd.y = 200;
+    LButton * rep = new LButton(newRender, NULL, repTd, {});
+    rep->b = new LTexture(newRender, NULL);
+    rep->b->loadImage(replay_button, CYAN.r, CYAN.g, CYAN.b);
+    rep->w = 113, rep->h = 107;
 
     pbg->loadImage(back_end_pic , CYAN.r , CYAN.g , CYAN.b);
+ ///   rpl->loadImage(replay_button, CYAN.r, CYAN.g, CYAN.b);
 
     c1->loadText("Final Score" , WHITE) , s1->loadText(sFinalScore , ORANGE);
     c2->loadText("Accuracy" , WHITE) , s2->loadText(sAccurate , GREEN);
     c3->loadText("Number of opponents killed" , WHITE) , s3->loadText(sSlDie , RED);
 
     pbg->render(0, 0);
+   /// rpl->render(1050, 200);
+    rep->render(0, 0, 0, 1);
 
     c1->render(350 , 5);
     s1->render(350 , 10 + c1->mHeight);
@@ -314,25 +351,30 @@ void renderEndGame(int &finalScore, int &totalType, int &slDie, SDL_Renderer * &
     c2->render(950 , 5) ;
     s2->render(950 , 10 + c2->mHeight);
 
-    c3->render(500, c1->mHeight + s1->mHeight + 100);
-    s3->render(500, c1->mHeight + s1->mHeight + c3->mHeight + 100) ;
+    c3->render(350, c1->mHeight + s1->mHeight + 100);
+    s3->render(350, c1->mHeight + s1->mHeight + c3->mHeight + 100) ;
 
     SDL_RenderPresent(newRender);
 
     bool quit = 0 ;
     int tgian = 0 ;
-    while((! quit) && (tgian < 5000)){
-        while(SDL_PollEvent(& e) != 0){
+    while((! quit) && (!replay) && (tgian < 15000)){
+        while(!replay && (SDL_PollEvent(& e) != 0)){
             if(e.type == SDL_QUIT)
                 quit = 1;
             if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_RETURN))
                 quit = 1;
+            bool voDung1 = 0 ;
+            rep->handleEvent(e, voDung1, voDung1, replay);
         }
         tgian ++ ;
         SDL_Delay(1);
     }
-
+   /// cerr << replay << "\n" ;
     amthanh->~LSound();
     TTF_CloseFont(f1) , TTF_CloseFont(f2) ;
-    c1->~LTexture() , c2->~LTexture() , c3->~LTexture() , s1->~LTexture() , s2->~LTexture() , s3->~LTexture(), pbg->~LTexture();
+    c1->~LTexture() , c2->~LTexture() , c3->~LTexture() , s1->~LTexture() , s2->~LTexture() , s3->~LTexture(), pbg->~LTexture();///, rpl->~LTexture();
+    rep->b->~LTexture();
+   /// cerr << replay << "\n" ;
+   /// replay = 1; /// thu nghiem
 }

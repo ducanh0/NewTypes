@@ -10,15 +10,19 @@ public :
 
     mPoint() ;
 
-    mPoint(const int &x2 ,const int &y2) ;
+    mPoint( int x2 , int y2) ;
 
-    int kc2( mPoint  &other);
+    int kc2( mPoint  other);
 
-    double kc(mPoint &other);
+    double kc(mPoint other);
 
-    bool isInside(const int &w ,const  int &h );
+    bool isInside( int w ,  int h );
 
-    double goc(mPoint * &other);
+    double goc(mPoint * other);
+
+    void operator = (mPoint other){
+        x = other.x  , y = other.y ;
+    }
 };
 
 #endif

@@ -15,6 +15,7 @@ enum kichthuoc{
     enemy_w = 20, enemy_h = 20,
     bullet_w = 10, bullet_h = 10,
     gai_w = 16, gai_h = 16,
+    replay_w = 113 , replay_h = 107
 };
 
 enum soluong{
@@ -35,7 +36,9 @@ const int vantoc_giat_enemy = 2;
 const int huong[8][2] = {0, -1 , 1, -1, 1, 0 , 1, 1, 0, 1 , -1, 1, -1, 0, -1, -1};
 
 const string WINDOW_TITLE = "22021102_NguyenDucAnh";
-const string du_lieu = "data/vocab.txt";
+const string du_lieu = "vocab";
+
+const string replay_button = "data/image/replay.png";
 
 const string bullet_sou = "data/sound/bullet.wav";
 const string bullet_pic = "data/image/bullet.png";
@@ -50,10 +53,10 @@ const string gai_pic = "data/image/gai.png";
 const string back_pre_pic = "data/image/back-pre2.png";
 
 const string back_in_pic = "data/image/back-in.png";
-const string back_in_sou = "data/sound/background.wav";
+const string back_in_sou = "data/sound/nhacnen.wav";
 
 const string back_end_pic = "data/image/back-end.png";
-const string back_end_sou = "data/sound/endgame2.wav";
+const string back_end_sou = "data/sound/endgame3.wav";
 
 const string preGame_font = "data/font/chu5.ttf";
 const string preGame_announce_font = "data/font/chu1.ttf";

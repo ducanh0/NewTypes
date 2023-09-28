@@ -1,6 +1,17 @@
 #include "supmain.h"
 
+/*
+    bo sung tat trong luc choi(done)
+    replay
+    tuy chon tu vung theo ngay
+*/
+
 int main(int argc , char * argv[]){
+
+    string input = selectInput();
+  ///  du_lieu = input;
+  /// cout << input << "\n" ;
+
     srand(time(0));
 
     SDL_Window * newWindow;
@@ -9,22 +20,36 @@ int main(int argc , char * argv[]){
 
     khoitaoSDL(newWindow, newRender);
 
-    Game * g = new Game(newRender);
+	///cout << "nhap ngay ban muon (dinh dang yymmdd): ";
+///	string s ; cin >> s;
+   /// cerr << 1;
+    Game * g = new Game(newRender,input);
 
-    pair<bool, bool> p = renderPreGame(newRender, e, g);
-    if(p.first){
-        bool runGame = 1;
+   /// cerr << 12;
+
+
+
         do{
-            if(p.second) g->auto_adjust_mainCha();
+            pair<bool, bool> p = renderPreGame(newRender, e, g);
+            bool runGame = 1, replay = 0;
+            if(!p.first) goto nextState;
 
-            renderGamePlay(newRender, g);
-            solEvent(e, runGame, g);
+            do{
+                if(p.second) g->auto_adjust_mainCha();
 
-        }while(runGame && !( g->isGameOver() ));
-    }
+                renderGamePlay(newRender, g);
+                solEvent(e, runGame, g);
 
-    g->mBg->stopMusic();
-    renderEndGame(g->true_type, g->total_type, g->sl_die, newRender, e);
+            }while(runGame && !( g->isGameOver() ));
+
+            nextState:;
+            g->mBg->stopMusic();
+            renderEndGame(g->true_type, g->total_type, g->sl_die, newRender, e, replay);
+
+            if(!replay) break;
+
+            g->refresh();
+        }while(1);
 
     g->~Game();
     thoatSDL(newWindow, newRender);
