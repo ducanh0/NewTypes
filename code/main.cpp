@@ -8,7 +8,7 @@
 
 int main(int argc , char * argv[]){
 
-    string input = selectInput();
+    string input = "123456" ; ///selectInput();
   ///  du_lieu = input;
   /// cout << input << "\n" ;
 
